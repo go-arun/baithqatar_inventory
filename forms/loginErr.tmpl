@@ -1,0 +1,31 @@
+{{ define "LoginErr" }}
+{{ template "Header" }}
+<head>
+<div>
+<h3>Login to Continue</h3>
+
+<p>
+<form method="POST" action="chkcredential">
+<label>User Name:</label>
+<input name="uname">
+</p>
+<br>
+<p>
+<label>Password:</label>
+<input name="pwd" type="password">
+</p>
+<br>
+<p>
+<input type="submit" class="button" value="Submit">
+</p>
+
+</div>
+
+<label class="company-name">GS Software Technologies</label>
+</form>:
+<script type="text/javascript">
+alert("Invalid Username of Password! Please Try Again");
+</script>
+{{ template "Footer" }}
+{{ end }}
+

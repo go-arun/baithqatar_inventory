@@ -1,0 +1,92 @@
+{{ define "Expense" }}
+{{ template "Header" }}
+<head>
+<div id="div-common">
+{{ template "Menu" }}
+</div>
+<body onload="ToggleInputMethod()">
+<form name="form_expense" method="POST" action="expense" onsubmit="return ensure_fields()">
+<!--div class="div-insertforms"> -->
+
+<label id="lblSaleDT" class="input-fields" >Date:</label>
+<input type="date" id="dt_sale" name="expensedate" class="input-fields" id='datePicker'>
+<lablel class="input-fields">Catagory:</lablel>
+
+<select id="HeadSelection" name="selected_head" class="input-fields">
+<option value="0">Select Catagory </option>
+  {{ range . }}
+<option value="{{ .Id }}">{{ .Desc }} </option>
+ {{ end }} 
+</select>
+<lable class="input-fields"> New Catagory? </label><br>
+<input name="OptionCheck" id="ChkBox" class="input-fields"  type="checkbox"  onclick="ToggleInputMethod()">
+
+
+<label id="lblAmt" for="Amount" class="input-fields" >Amount:</label>
+<input type="text" name=Amount id="InputAmt" class="input-fields"><br>
+<input id="inputTG" name="new_catagory" class="input-fields" >
+
+
+<input type="submit" class="button" value="Submit">
+<!-- </div> -->
+
+<script>
+document.getElementById("dt_sale").valueAsDate = new Date()//to Set current date in datepicker
+function ToggleInputMethod() {
+  var x = document.getElementById("inputTG");
+  var y = document.getElementById("HeadSelection");
+  var z = document.getElementById("lblAmt");
+  var x1 = document.getElementById("InputAmt");
+  var x2 = document.getElementById("dt_sale");
+  var x3 = document.getElementById("lblSaleDT");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+    y.style.display = "none";
+    z.style.display = "none";
+    x1.style.display = "none";
+    x2.style.display = "none";
+    x3.style.display = "none";
+  } else {
+    x.style.display = "none";
+    y.style.display = "block";
+    z.style.display = "block";
+    x1.style.display = "block";
+    x2.style.display = "block";
+    x3.style.display = "block";
+  }
+}
+
+
+
+function ensure_fields(){
+	var cat_val = document.getElementById('HeadSelection').value
+	var amt_val = +document.getElementById('InputAmt').value
+	
+	if(document.getElementById('ChkBox').checked){//Entering New Catagory, so need to ensure only catagory input
+		newCat_val = document.getElementById('inputTG').value
+		if(newCat_val == ""){
+			alert("Please enter New Catagory Name before Continuing..")
+			return false;
+		}
+	alert("Successfully Added New Catagory");
+	return true;
+	}
+	// Normal verifications while entering expenses	
+	if (cat_val == 0){
+		alert("Select Expense Catogory!!");
+		return false;
+	}
+	var regex  = /^\d+\.?\d{0,2}?$/;
+	if (regex.test(amt_val) && (amt_val!="")){
+		alert("Successfully Added Expense");
+		return true
+	}else{
+		alert(" Enter Amount in correct foramt Example 55.00/55/55.55");	
+		return false
+	}
+}
+	
+</script>
+{{ template "Footer" }}
+{{ end }}
+

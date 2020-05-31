@@ -1,0 +1,125 @@
+{{ define "Settings" }}
+{{ template "Header" }}
+<div id="div-common">
+{{ template "Menu" }}
+</div>
+<form name="form_reports" method="POST" action="settings" onsubmit="return verifyInputs()" >
+<br><br>
+<fieldset id="field_settings1">
+<input type="radio" name="doWhat" onclick="onClick()" value="addSmen" id="smen">
+<lablel for Salesmen>Add New Salesmen</lablel><br>
+
+<input type="radio" name="doWhat" onclick="onClick()" value="addCust" id="cust">
+<lablel for Salesmen>Add New Customer</lablel><br>
+
+<input type="radio" name="doWhat" onclick="onClick()" value="addExpense" id="expense">
+<lablel for item>Add New Expense Catagory</lablel><br>
+
+<input type="radio" name="doWhat" onclick="onClick()" value="addItem" id="item">
+<lablel for item>Add New Item</lablel><br>
+
+</fieldset>
+
+<fieldset id="field_settings2" name="fld-Smen">
+<legend>Salesmen</legend>
+<input type="text" id="Smen" name="smen" placeholder="New Salesmen Name">
+</fieldset>
+
+<fieldset id="field_settings3">
+<legend>Customer</legend>
+<input type="text" id="Cust" name="cust" placeholder="New Customer Name">
+</fieldset>
+
+<fieldset id="field_settings5">
+<legend>Expense Catagory</legend>
+<input type="text" id="Expense" name="expense" placeholder="New Expense Catagory">
+</fieldset><br>
+
+<fieldset id="field_settings4">
+<legend>Item</legend>
+<input type="text" id="Item" name="item" placeholder="New Item Name">
+<input type="text" id="Itemprice" name="itemprice" placeholder="Sale Price">
+</fieldset><br>
+
+
+
+<input type="submit" name="submitbtn" class="settings-submit" value="Save">
+
+<script>
+document.getElementById("field_settings2").disabled=true;
+document.getElementById("field_settings3").disabled=true;
+document.getElementById("field_settings4").disabled=true;
+document.getElementById("field_settings5").disabled=true;
+
+function onClick(){
+	var addSmen = document.getElementById("smen").checked;
+	var addCust = document.getElementById("cust").checked;
+	var addItem = document.getElementById("item").checked;
+	var addExpe = document.getElementById("expense").checked;
+
+	var fldSmen = document.getElementById("field_settings2");
+	var fldCust = document.getElementById("field_settings3");
+	var fldItem = document.getElementById("field_settings4");
+	var fldExpe = document.getElementById("field_settings5");
+
+	document.getElementById("Smen").value="";
+	document.getElementById("Cust").value="";
+	document.getElementById("Item").value="";
+	document.getElementById("Itemprice").value="";
+	document.getElementById("Expense").value="";
+
+	if(addSmen){	
+		fldSmen.disabled = false;
+		fldCust.disabled = true;
+		fldItem.disabled = true;
+		fldExpe.disabled = true;
+		
+	}else if(addCust){
+		fldSmen.disabled = true;
+		fldCust.disabled = false;
+		fldItem.disabled = true;
+		fldExpe.disabled = true;
+		
+	}else if(addItem){
+		fldSmen.disabled = true;
+		fldCust.disabled = true;
+		fldItem.disabled = false;
+		fldExpe.disabled = true;
+	}else if(addExpe){
+		fldSmen.disabled = true;
+		fldCust.disabled = true;
+		fldItem.disabled = true;
+		fldExpe.disabled = false;
+		
+	}
+}
+//varify inputs while submitting form
+function verifyInputs(){
+	var regex  = /^\d+(?:\.\d{0,2})$/;
+	var addSmen = document.getElementById("smen").checked;
+	var addCust = document.getElementById("cust").checked;
+	var addItem = document.getElementById("item").checked;
+	var addExpe = document.getElementById("expense").checked;
+
+	var inpSmen = document.getElementById("Smen").value;
+	var inpCust = document.getElementById("Cust").value;
+	var Item    = document.getElementById("Item").value;
+	var ItmPrice= document.getElementById("Itemprice").value;
+	var NewExpen= document.getElementById("Expense").value;
+
+	if(!addSmen && !addCust && !addItem && !addExpe){
+		alert("Select Any one Option");
+		return false;	
+	}else if(inpSmen=="" && inpCust =="" && Item=="" && NewExpen==""){
+		alert("Provide Details to Add!!");
+		return false;
+	}else if(addItem ){
+		if(ItmPrice=="" || !regex.test(ItmPrice)){
+			alert(" Check ItemPrice is provided and foramt is correct");
+		return false;
+		}
+	}
+}
+</script>
+{{ template "Footer" }}
+{{ end }}

@@ -1,0 +1,91 @@
+{{ define "SaleReports" }}
+{{ template "Header" }}
+<div id="div-common">
+{{ template "Menu" }}
+</div>
+<body onload="FieldSelector()">
+<form name="form_reports" method="POST" action="salereports" onsubmit="return verify_inputs()" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+{{ template "ReportSubMenu" }}
+<fieldset id="field1">REPORT:Sales</fieldset>
+<p>By Default will Show the Current Date Transactions </p>
+    <select id="selectCust" name="selectCust" class="input-fields">
+	<option value="0">Select Customer  </option>
+	{{ range .Cust_Data }}	  
+	<option value="{{ .Id }}">{{ .Desc }} </option>
+ 	 {{ end }} 
+    </select>
+<select id="selectSmen" name="selectSmen" class="input-fields">
+<option value="0">Select Salesmen  </option>
+  {{ range .Smen_Data }}
+<option value="{{ .Id }}">{{ .Desc }}</option>
+ {{ end }}
+</select>
+<fieldset id="field1">
+<legend>Mode of Sale</legend>
+<label for credit sale> Credit</label>
+<input type="radio" id="rdo_credit" onclick="disableRdobtnCash()" name="Sale_Mode_CR">
+<label for cash sale>Cash</label>
+<input type="radio" id="rdo_cash" onclick="disableRdobtnCredit()" name="Sale_Mode_CA">
+</fieldset>
+    <lable for frm date> From Date: </label>
+    <input type="date" id="frm_dt" name="frm_dt" onchange="syncDates()" required>
+    <lable for to_date> To Date: </label>
+    <input type="date" id="to_dt" name="to_dt" onchange="verifyToDate()" required>
+  <input type="submit" value="Update">
+
+<fieldset id="field_smen">
+<table id="itemsTable" name="itemtble2" class="input-fields">
+  <tr>
+    <th>Inv.NO</th>
+    <th>Date</th>
+    <th>Customer</th>
+    <th>Amount</th>
+    <th>Salesmen</th>
+    <th>SaleMode</th>
+  </tr>
+  {{ range .Inv_Data }}
+  <tr>
+    <td><a href="/showinvoice?smode={{ .SaleMod }}&smen={{ .Smen }}&cus={{ .CustNm }}&dt={{ .InvDt }}&invno={{ .InvNo }}">{{ .InvNo }} </a></td>
+    <td>{{ .InvDt }}</td>
+    <td>{{ .CustNm }}</td>
+    <td>{{ .InvAmt }}</td>
+    <td>{{ .Smen }}</td>
+    <td>{{ .SaleMod }}</td>
+  </tr>
+  {{ end }}
+
+</table>
+
+<input type="number" id="invtotal" value="{{ .Inv_Total }}" name="INVtotal" class="inv-total" maxlength="4" size="10" readonly><br>
+
+
+</fieldset>
+
+<script>
+// Set date picker date to current date
+document.getElementById("frm_dt").valueAsDate = new Date();
+document.getElementById("to_dt").valueAsDate = new Date();
+//Change to_date to match from date , only while chaning frm date 
+function syncDates(){
+document.getElementById("to_dt").valueAsDate = document.getElementById("frm_dt").valueAsDate; 
+}
+function verifyToDate(){
+	var toDt = document.getElementById("to_dt").valueAsDate;
+	var frmDt  = document.getElementById("frm_dt").valueAsDate; 
+	if (frmDt > toDt){
+		alert("'To Date' should not be older than 'From Date'")
+		document.getElementById("to_dt").valueAsDate = frmDt;
+	}
+}
+//Disable other radiobutton while clink
+function disableRdobtnCash(){
+		document.getElementById('rdo_cash').checked = false;
+}
+
+function disableRdobtnCredit(){
+		document.getElementById('rdo_credit').checked = false;
+}
+</script>
+{{ template "Footer" }}
+{{ end }}
+

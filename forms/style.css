@@ -1,0 +1,111 @@
+body {
+  background-color: coral;
+}
+
+.menu-size { /*Top Menu Size*/
+font-size: 20px
+}
+
+
+#div-common { /* Top BOX menu is inside this box */
+  border: 1px solid black;
+  background-color: lightblue;
+  padding-top: 10px;
+  padding-right: 100px;
+  padding-bottom: 20px;
+  padding-left: 600px;
+}
+//to make all input filed left margine same
+.input-fields {
+  margin-left: 200px;
+  width:150px
+}
+
+.button {
+
+margin: 5px 60px 45px 100px;
+
+}
+.company-name {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+.inv-total {
+    position: absolute;
+    right: 260px;
+  }
+
+/*Salesmen Tracker */
+//Adjusting gap between labels
+.firstLabel {
+            left:10;
+            right:0;
+            background-color: black;
+            position: absolute;
+            bottom: 0px;
+            margin-right: 10px;
+            margin-left: 10px;
+            margin-bottom: 10px;
+            }
+
+#itemsTable {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 80%;
+}
+
+#itemsTable td, #itemsTable th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#itemsTable tr:nth-child(even){background-color: #f2f2f2;}
+
+#itemsTable tr:hover {background-color: #ddd;}
+
+#itemsTable th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+//to hide input box borders in Salesmantraker form inside tables 
+input[type=text] {
+  border: none;
+  background-color: none;
+  outline: 0;
+  font-size: 25px;
+  width: 300px;
+  height: 30px;
+}
+//To align filedset side by side in Showreports form //IS NOT REQUIRD CLEAN LATER
+fieldset {
+    padding: 3px;
+    margin:0;
+    float: left;
+}
+#field1 {
+    width: 10%;
+}
+#field2 {
+    width: 30%;
+}
+//Keep the width according to the txt inside the filed in all reports page
+#reportheadfield{
+    padding: 3px;
+    margin:0;
+    float: left;
+    width: 30%; 
+}
+
+#field_settings1, #field_settings2, #field_settings3, #field_settings4, #field_settings5{
+    width: 30%;
+}
+
+.settings-submit {
+    position: absolute;
+    left: 360px;
+  }

@@ -1,0 +1,63 @@
+{{ define "ShowInvoice" }}
+{{ template "Header" }}
+<div id="div-common">
+{{ template "Menu" }}
+</div>
+<body onload="getUrlVars()">
+<form name="form_reports" method="POST" action="showinvoice" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+{{ template "ReportSubMenu" }}
+<fieldset id="field2">
+Inv#:<input type="text" name="InvoiceNo" id="InvoiceNo" maxlength="4" size="4" readonly>
+Date:<input type="text" name="date" id="date" maxlength="12" size="7" readonly>
+SaleMod:<input type="text" name="slmode" id="salemod" maxlength="4" size="4" readonly><br>
+Cust:<input type="text" name="customer" id="customer" maxlength="12" size="12" readonly>
+SalesMen:<input type="text" name="salesmen" id="salesmen" maxlength="12" size="13" readonly>
+</fieldset>
+
+<fieldset id="field_smen">
+<table id="itemsTable" name="itemtble2" class="input-fields">
+  <tr>
+    <th>SL.No</th>
+    <th>Prod.ID</th>
+    <th>ProductDescription</th>
+    <th>Price</th>
+    <th>Qty</th>
+    <th>Amount</th>
+  </tr>
+  {{ range .InvItems }}
+  <tr>
+    <td>{{ .ProdID }}</td>
+    <td>{{ .ProdID }}</td>
+    <td>{{ .ProdDesc }}</td>
+    <td>{{ .PrdPrce }}</td>
+    <td>{{ .PrdQty }}</td>
+    <td>{{ .Extra }}</td>
+  </tr>
+  {{ end }}
+
+</table>
+      <input type="button"  value="<<Back to Report" onclick="history.back()">
+
+<input type="number" id="invtotal" value="{{ .InvTTL }}" name="INVtotal" class="inv-total" maxlength="4" size="6" readonly><br>
+
+
+</fieldset>
+
+<script>
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+document.getElementById("date").value=vars["dt"];
+document.getElementById("InvoiceNo").value=vars["invno"];
+document.getElementById("salemod").value=vars["smode"];
+document.getElementById("customer").value=vars["cus"].replace(/%20/g,' ');
+document.getElementById("salesmen").value=vars["smen"].replace(/%20/g,' ');
+document.getElementById("invtotal").value=vars["invtotal"].replace(/%20/g,' ');
+    //return vars;
+}
+</script>
+{{ template "Footer" }}
+{{ end }}
+

@@ -1,0 +1,68 @@
+{{ define "ExpenseReports" }}
+{{ template "Header" }}
+<div id="div-common">
+{{ template "Menu" }}
+</div>
+<body onload="FieldSelector()">
+<form name="form_reports" method="POST" action="expensereports" onsubmit="return verify_inputs()" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+{{ template "ReportSubMenu" }}
+<fieldset id="field1">REPORT:Expense</fieldset>
+<p>By Default will Show the Current Date Transactions </p>
+    <select id="selectCat" name="selectCat" class="input-fields">
+	<option value="0">Select Expense Catagory  </option>
+	{{ range .AcHead }}	  
+	<option value="{{ .Id }}">{{ .Desc }} </option>
+ 	 {{ end }} 
+    </select>
+    <lable for frm date> From Date: </label>
+    <input type="date" id="frm_dt" name="frm_dt" onchange="syncDates()" required>
+    <lable for to_date> To Date: </label>
+    <input type="date" id="to_dt" name="to_dt" onchange="verifyToDate()" required>
+  <input type="submit" value="Update">
+
+<fieldset id="field_smen">
+<table id="itemsTable" name="itemtble2" class="input-fields">
+  <tr>
+    <th>Date</th>
+    <th>Catagory</th>
+    <th>Amount</th>
+    <th>CumulativeSUM </th>
+  </tr>
+  {{ range .ExpDetails }}
+  <tr>
+    <td>{{ .Dt }}</th>
+    <td>{{ .Desc }}</th>
+    <td>{{ .Amt }}</th>
+    <td>{{ .Camt }}</th>
+  </tr>
+  {{ end }}
+
+</table>
+
+
+</fieldset>
+
+<script>
+// Set date picker date to current date
+document.getElementById("frm_dt").valueAsDate = new Date();
+document.getElementById("to_dt").valueAsDate = new Date();
+//Change to_date to match from date , only while chaning frm date 
+function syncDates(){
+document.getElementById("to_dt").valueAsDate = document.getElementById("frm_dt").valueAsDate; 
+}
+function verifyToDate(){
+	var toDt = document.getElementById("to_dt").valueAsDate;
+	var frmDt  = document.getElementById("frm_dt").valueAsDate; 
+	if (frmDt > toDt){
+		alert("'To Date' should not be older than 'From Date'")
+		document.getElementById("to_dt").valueAsDate = frmDt;
+	}
+}
+//Test
+
+alert("okay");
+//Test
+</script>
+{{ template "Footer" }}
+{{ end }}
+

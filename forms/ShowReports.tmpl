@@ -1,0 +1,65 @@
+{{ define "ShowReports" }}
+{{ template "Header" }}
+<div id="div-common">
+{{ template "Menu" }}
+</div>
+<body onload="FieldSelector()">
+<form name="form_reports" method="POST" action="reports" onsubmit="return verify_inputs()" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+{{ template "ReportSubMenu" }}
+<fieldset id="field1">REPORT:Salesmen Allocation</fieldset>
+<p>By Default will Show the Current Date Transactions </p>
+    <select id="selectSmen" name="selectSmen" class="input-fields">
+	<option value="0">Select Salesmen  </option>
+	{{ range .SMenNames }}	  
+	<option value="{{ .Id }}">{{ .Desc }} </option>
+ 	 {{ end }} 
+ 	  
+    </select>
+    <lable for frm date> From Date: </label>
+    <input type="date" id="frm_dt" name="frm_dt" onchange="syncDates()" required>
+    <lable for to_date> To Date: </label>
+    <input type="date" id="to_dt" name="to_dt" onchange="verifyToDate()" required>
+  <input type="submit" value="Update">
+
+<fieldset id="field_smen">
+<table id="itemsTable" name="itemtble2" class="input-fields">
+  <tr>
+    <th>Date</th>
+    <th>Product</th>
+    <th>Quantity</th>
+    <th>Salesmen</th>
+  </tr>
+  {{ range .SMenTrans }}
+  <tr>
+    <td>{{ .Dt }}</th>
+    <td>{{ .Prod }}</th>
+    <td>{{ .Qty }}</th>
+    <td>{{ .Smen }}</th>
+  </tr>
+  {{ end }}
+
+</table>
+</fieldset>
+
+<script>
+// Set 2 date pickers date to current date
+document.getElementById("frm_dt").valueAsDate = new Date();
+document.getElementById("to_dt").valueAsDate = new Date();
+
+
+//Change to_date to match from date , only while chaning frm date 
+function syncDates(){
+	document.getElementById("to_dt").valueAsDate = document.getElementById("frm_dt").valueAsDate; 
+}
+function verifyToDate(){
+	var toDt = document.getElementById("to_dt").valueAsDate;
+	var frmDt  = document.getElementById("frm_dt").valueAsDate; 
+	if (frmDt > toDt){
+		alert("'To Date' should not be older than 'From Date'")
+		document.getElementById("to_dt").valueAsDate = frmDt;
+	}
+}
+</script>
+{{ template "Footer" }}
+{{ end }}
+

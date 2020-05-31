@@ -1,0 +1,25 @@
+{{ define "Index" }}
+{{ template "Header" }}
+<head>
+<div id="div-common">
+<h3>Login to Continue</h3>
+
+<p>
+<form method="POST" action="chkcredential">
+<label>User Name:</label>
+<input name="uname">
+</p>
+<br>
+<p>
+<label>Password:</label>
+<input name="pwd" type="password">
+</p>
+<br>
+<p>
+<input type="submit" class="button" value="Submit">
+</p>
+</div>
+</form>:
+{{ template "Footer" }}
+{{ end }}
+

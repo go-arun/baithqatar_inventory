@@ -1,0 +1,99 @@
+{{ define "Stockentry" }}
+{{ template "Header" }}
+<head>
+<div id="div-common">
+{{ template "Menu" }}
+</div>
+<form name="form_smen" method="POST" action="stock" onsubmit="return verify_inputs()" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+<label id="lblDT" class="input-fields" >Date:</label>
+<input type="date" id="stkEntryDt" name="items_issueDt" class="input-fields" id='datePicker' required>
+<p>
+<label id="lblDT" class="input-fields" >Add items to list below :</label>
+</p>
+<select id="selectItem" name="selectItem" class="input-fields">
+<option value="0">Select Item  </option>
+
+  {{ range .Prd_Data }}
+<option value="{{ .Id }}">[Stock:{{.Qty}}] {{.Desc}}) </option>
+ {{ end }}
+</select>
+
+<input type="number" id="qty" placeholder="Enter Quantity">
+<button type="button" onclick="addItemtoList()"> Add</button><br><br>
+
+<table id="itemsTable" name="itemtble" class="input-fields">
+  <tr>
+    <th>SL.No</th>
+    <th>ItmCode</th>
+    <th>ItemName</th>
+    <th>Adding Qty</th>
+  </tr>
+</table>
+
+<input type="submit" class="button" value="Update Stock">
+<div id='alrt' style="fontWeight = 'bold'"></div>
+</form>
+</body>
+
+<script>
+document.getElementById("stkEntryDt").valueAsDate = new Date()//to Set current date in datepicker
+
+//Add New row in table
+function addItemtoList(){
+
+  var item_id = document.getElementById('selectItem').value
+  var item_qty = document.getElementById('qty').value
+  //Need to ensure above two values are exists bfore adding to table
+  if(item_id == 0 ){
+	alert("Select item");
+	return;
+  }else if (item_qty <=0 ){
+	alert("Mention Quantity");
+	return;
+  }	
+
+  var count = document.getElementById("itemsTable").rows.length;
+  var table = document.getElementById("itemsTable");
+  var row = table.insertRow(count);
+  var cell1 = row.insertCell(0)
+  var cell2 = row.insertCell(1)
+  var cell3 = row.insertCell(2)
+  var cell4 = row.insertCell(3)
+
+  //to get the text of selected option ( to get selected item)
+  var sel = document.getElementById('selectItem');
+  var selected_item = sel.options[sel.selectedIndex].text;
+  var selected_qty = document.getElementById('qty').value;
+  var selected_itmcode = document.getElementById('selectItem').value;
+
+  //Inserting input tag inside table, to retrive value from each row in main praogram(only for itmcode and qty)
+  cell1.innerHTML = count;//SL.NO
+  cell2.innerHTML = "<input type='text' name='itemCodeRow__" +  count + "' value='" + selected_itmcode + "'readonly>";
+  cell3.innerHTML = sel.options[sel.selectedIndex].text;
+  cell4.innerHTML = "<input type='text' name='itemQtyRow__" +  count + "' value='" + selected_qty + "'readonly>";
+
+// To remove the item from list from select after adding to table to avoid duplicate entry
+var selectobject = document.getElementById("selectItem");
+selectobject.remove(sel.selectedIndex);
+//After adding each item makes clearing qty field
+var qtyobject = document.getElementById("qty");
+qtyobject.value="";
+
+}
+
+function  verify_inputs(){
+	var table_rows = (document.getElementById("itemsTable").rows.length);
+	if (table_rows == 1){
+		alert("Add items!");
+		return false;
+	}
+//Display Success Message
+document.getElementById('alrt').innerHTML='<b>Please wait, Updating details .....</b>'; 
+setTimeout(function() {document.getElementById('alrt').innerHTML='';},10000);
+}
+
+
+</script>
+{{ template "Footer" }}
+{{ end }}
+

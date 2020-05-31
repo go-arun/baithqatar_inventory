@@ -1,0 +1,287 @@
+{{ define "Sales" }}
+{{ template "Header" }}
+<head>
+<div id="div-common">
+{{ template "Menu" }}
+</div>
+<form name="form_smen" method="POST" action="sales" onsubmit="return verify_inputs()" >
+<!--form name="form_smen" method="POST" action="sales" onsubmit="return verify_inputs()" onkeypress="return event.charCode = 190 || (event.charCode >= 48 && event.charCode <= 57)"-->
+</body>
+<label id="lblDT" class="input-fields" >Date:</label>
+<input type="date" id="issue_date" name="items_issueDt" class="input-fields" id='datePicker' required readonly>
+<lable for Invoice umber>Invoice#</label>
+<input type="text" name="InvoiceNo" id="InvoiceNo" maxlength="4" size="4" readonly><br><br>
+<select id="selectSmen" name="selectSmen" onchange="clearInputFields()" class="input-fields">
+<option value="0">Select  Salesmen  </option>
+  {{ range .SmenData }}
+<option value="{{ .Id }}">{{ .Desc }}</option>
+ {{ end }}
+</select>
+<input name="DirectSale" id="DirectSale" type="checkbox" onclick="chkBxToggleSettings()">
+<label for checkbox>Direct Sale  </label><br><br>
+
+<select id="selectCust" name="selectCust" class="input-fields">
+<option value="0">Select Customer </option>
+  {{ range .Customers }}
+<option value="{{ .Id }}">{{ .Desc }}</option>
+ {{ end }}
+</select>
+
+<fieldset id="field1">
+<legend>Mode of Sale</legend>
+<label for credit sale> Credit</label>
+<input type="radio" id="rdo_credit" onclick="disableRdobtnCash()" name="Sale_Mode_CR">
+<label for cash sale>Cash</label>
+<input type="radio" id="rdo_cash" onclick="disableRdobtnCredit()" name="Sale_Mode_CA">
+</fieldset>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<lable>Price</lable>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<lable >Warehouse.Stk</lable>&nbsp;&nbsp;&nbsp;<lable >Salesmen Stk</lable><br>
+
+
+<select id="selectItem" name="selectItem" onchange="fetchItemData()"  class="input-fields">
+<option value="0">Select Item  </option>
+
+  {{ range .FullProduct }}
+<option value="{{ .Id }}"> {{.Desc}} </option>
+<!--option value="{{ .Id }}">[Qty:{{.Qty}}] {{.Desc}}) </option -->
+ {{ end }}
+</select>
+
+<input type="number" name="Amount" id="InputAmt" placeholder="Price" maxlength="4" size="4">
+<input type="text" name="qty" id="qty" placeholder="Qty" onkeypress="return allowNumberKey(event)" maxlength="4" size="10">
+<input type="text" name="w_stock" id="Wstock" placeholder="Wstock" maxlength="4" size="10" readonly>
+<input type="text" name="m_stock" id="Mstock" placeholder="Mstock" maxlength="4" size="10" readonly>
+
+<button type="button" onclick="addItemtoList()"> Add</button><br><br>
+
+<table id="itemsTable" name="itemtble" class="input-fields">
+  <tr>
+    <th>SL.No</th>
+    <th>ItmCode</th>
+    <th>ItemName</th>
+    <th>Stock(Warehouse)</th>
+    <th>Stock(Salesmen)</th>
+    <th>Price </th>
+    <th>Billing Qty</th>
+    <th>Amount</th>
+  </tr>
+</table>
+
+<input type="number" id="invtotal" name="INVtotal" class="inv-total" maxlength="4" size="10" readonly>
+<br><br><input type="submit" class="inv-total" value="Submit">
+<div id='alrt' style="fontWeight = 'bold'"></div>
+</form>
+</body>
+
+<script>
+function allowNumberKey(evt)
+      {
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+
+         return true;
+      }
+//Disable other radiobutton while clink
+function disableRdobtnCash(){
+		document.getElementById('rdo_cash').checked = false;
+}
+
+function disableRdobtnCredit(){
+		document.getElementById('rdo_credit').checked = false;
+}
+
+//Invoice total declared as global
+  var InvToal = 0.00;
+//On DirectSale mode make SmenSale to NA
+function chkBxToggleSettings(){
+	if(document.getElementById('DirectSale').checked){
+		alert("checked");
+		document.getElementById('Mstock').value = "Not Applicable";
+	   	document.getElementById('selectSmen').disabled=true;
+	}else{
+		document.getElementById('Mstock').value = "";
+	   	document.getElementById('selectSmen').disabled=false;
+	}
+clearInputFields()
+document.getElementById('selectSmen').selectedIndex=0;
+}
+//Setting Next Invoice Number
+document.getElementById("InvoiceNo").value = {{ .NextInvNo }}
+ 
+//Updating Price text Box
+function fetchItemData() {
+var smen_id = document.getElementById('selectSmen').value
+var prod_cod = document.getElementById('selectItem').value 
+var chkBx_dSale = document.getElementById('DirectSale').checked
+
+if (!chkBx_dSale){//Sale via Salesmen
+	alert("Smode");
+	if (smen_id == 0){ 
+		alert("Select Salesmen to Proceed");
+		document.getElementById('selectItem').selectedIndex=0;
+		return;
+	}
+{{ range .StkWithSmen }}
+        var smen_assigned_smen_id = {{ .SmenID }}
+ 	var smen_assigned_prod_id = {{ .ProdID }}
+
+	//Checking this item is assigned to selected salesmen
+	if (smen_id == smen_assigned_smen_id && prod_cod == smen_assigned_prod_id){
+		document.getElementById('InputAmt').value = {{ .PrdPrce }};
+		document.getElementById('Wstock').value = {{ .PrdWQty }}
+          	document.getElementById('Mstock').value = {{ .PrdQty }}
+		alert("arun great ");
+	}
+{{ end }}
+	if (document.getElementById('InputAmt').value == ""){
+		alert("This item not assigned to this Salesmen");
+	}
+
+
+
+
+
+
+}else{//Direct Sale
+	alert("Dmode");
+{{ range .FullProduct }}
+	if (prod_cod == {{ .Id }}){
+		document.getElementById('InputAmt').value = {{ .Price }};
+		document.getElementById('Wstock').value = {{ .Qty }};
+	}
+{{ end }}
+}
+
+}
+
+
+
+
+
+
+
+document.getElementById("issue_date").valueAsDate = new Date()//to Set current date in datepicker
+
+//Add New row in table
+function addItemtoList(){
+
+  var Is_DirectSL = document.getElementById('DirectSale').checked;
+  var item_id = document.getElementById('selectItem').value;
+  var item_qty = parseInt(document.getElementById('qty').value,10);
+  var item_price = document.getElementById('InputAmt').value;
+  var whouse_stk = parseInt(document.getElementById('Wstock').value,10);
+  var smen_stk = parseInt(document.getElementById('Mstock').value,10);
+  var regex  = /^\d+\.?\d{0,2}?$/;
+
+  //Need to ensure above  values are exists bfore adding to table
+  if(item_id == 0 ){
+	alert("Select item");
+	return;
+  }else if (item_qty =="" || item_qty== 0){
+	alert("Select Quantity");
+	return;
+  }else if (regex.test(item_price) && (item_price!="") && (item_price >0)){
+	//Improve here , I am not able to avoid this else part , 
+  }else{
+	alert("Check Price Format!!");
+	return;
+  }
+//Sufficient Stok Check
+if (Is_DirectSL && (item_qty > whouse_stk || whouse_stk == 0)){
+	alert("Stock is not Sufficient!!");
+	return;
+}else if ( smen_stk < item_qty || smen_stk == 0){ 
+	alert("Dont have sufficient stock with salesmen"+smen_stk +"," +item_qty);
+	return;
+}
+//Items stared adding to list so locking Check box
+document.getElementById('DirectSale').disabled=true;
+document.getElementById('selectSmen').disabled=true;
+
+
+
+  var count = document.getElementById("itemsTable").rows.length;
+  var table = document.getElementById("itemsTable");
+  var row = table.insertRow(count);
+  var cell1 = row.insertCell(0)
+  var cell2 = row.insertCell(1)
+  var cell3 = row.insertCell(2)
+  var cell4 = row.insertCell(3)
+  var cell5 = row.insertCell(4)
+  var cell6 = row.insertCell(5)
+  var cell7 = row.insertCell(6)
+  var cell8 = row.insertCell(7)
+
+  //to get the text of selected option ( to get selected item)
+  var sel = document.getElementById('selectItem');
+  var selected_item = sel.options[sel.selectedIndex].text;
+  var selected_qty = document.getElementById('qty').value;
+  var selected_price = document.getElementById('InputAmt').value;
+  var selected_itmcode = document.getElementById('selectItem').value;
+
+  //Inserting input tag inside table, to retrive value from each row in main praogram(only for itmcode and qty)
+  cell1.innerHTML = count;//SL.NO
+  cell2.innerHTML = "<input type='text' name='itemCodeRow__" +  count + "' value='" + selected_itmcode + "'readonly maxlength='4' size='4'>";
+  cell3.innerHTML = sel.options[sel.selectedIndex].text;
+  cell4.innerHTML = whouse_stk;//SL.NO
+  cell5.innerHTML = document.getElementById('Mstock').value;
+  cell6.innerHTML = "<input type='text' name='itemPriceRow__" +  count + "' value='" + selected_price + "'readonly  maxlength='4' size='4'>";
+  cell7.innerHTML = "<input type='text' name='itemQtyRow__" +  count + "' value='" + selected_qty + "'readonly  maxlength='4' size='4'>";
+  cell8.innerHTML = selected_qty * selected_price;
+  InvToal = InvToal + (selected_qty * selected_price);
+  document.getElementById('invtotal').value=InvToal;
+// To remove the item from list from select after adding to table to avoid duplicate entry
+var selectobject = document.getElementById("selectItem");
+selectobject.remove(sel.selectedIndex);
+//After adding each item makes clearing qty,price,stocks text boxes 
+clearInputFields()
+}
+function clearInputFields(){
+	var qtyobject = document.getElementById("qty");
+	qtyobject.value="";
+	document.getElementById('InputAmt').value="";
+	document.getElementById('Wstock').value="";
+   	document.getElementById('selectItem').selectedIndex=0;
+}
+
+function  verify_inputs(){
+	var table_rows = (document.getElementById("itemsTable").rows.length);
+	var smen_id = document.getElementById('selectSmen').value
+	var cust_id = document.getElementById('selectCust').value
+	var cash_sale  = document.getElementById('rdo_credit').checked
+	var cred_sale  = document.getElementById('rdo_cash').checked
+	if (table_rows == 1){
+		alert("Add items!");
+		return false;
+	}else if (!document.getElementById('DirectSale').checked){
+		if (smen_id == 0){
+			alert("Select Salesmen")
+			return false;
+		}
+	}
+
+	if (cust_id == 0){
+		alert("Select Customer")
+		return false;
+	}else if (!cash_sale && !cred_sale){
+		alert("Select Mode of Sale - CREDIT/CASH")
+		return false;
+	}
+	
+
+//All looks fine,Enabling again otherwise POST will not get value of this  
+document.getElementById('DirectSale').disabled=false;
+document.getElementById('selectSmen').disabled=false;
+
+
+//Display Success Message
+document.getElementById('alrt').innerHTML='<b>Please wait, Updating details .....</b>'; 
+setTimeout(function() {document.getElementById('alrt').innerHTML='';},10000);
+}
+
+
+</script>
+{{ template "Footer" }}
+{{ end }}
+
